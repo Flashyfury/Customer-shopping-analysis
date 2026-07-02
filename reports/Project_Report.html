@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Shopping Behavior Analysis – Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --card: #1C2128;
+    --border: #30363D;
+    --text: #E6EDF3;
+    --subtext: #8B949E;
+    --accent1: #58A6FF;
+    --accent2: #3FB950;
+    --accent3: #F78166;
+    --accent4: #D2A8FF;
+    --accent5: #FFA657;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  /* Cover */
+  .cover {
+    background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #1C2128 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(88,166,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent1);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 2.4em;
+    font-weight: 700;
+    background: linear-gradient(135deg, #E6EDF3 0%, #58A6FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-size: 1.1em;
+    color: var(--subtext);
+    margin-bottom: 32px;
+  }
+  .meta-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    text-align: left;
+    max-width: 500px;
+  }
+  .meta-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+  }
+  .meta-item .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--subtext);
+    margin-bottom: 2px;
+  }
+  .meta-item .meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Main content */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 1.8em 0 0.6em;
+  }
+  h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    color: var(--accent1);
+  }
+  h3 { font-size: 1.15em; color: var(--accent4); }
+  h4 { font-size: 1em; color: var(--accent5); }
+
+  p { margin: 0.75em 0; color: var(--text); }
+
+  strong { color: var(--accent1); font-weight: 600; }
+  em { color: var(--accent5); font-style: italic; }
+
+  a { color: var(--accent1); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--accent3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  pre {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 1.2em 0;
+    position: relative;
+  }
+  pre::before {
+    content: 'SQL';
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    font-size: 10px;
+    color: var(--subtext);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+  }
+  pre code {
+    background: none;
+    border: none;
+    color: var(--accent2);
+    font-size: 13px;
+    padding: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2em 0;
+    font-size: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  th {
+    background: rgba(88,166,255,0.12);
+    color: var(--accent1);
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 2px solid rgba(88,166,255,0.3);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  tr:hover td { background: rgba(88,166,255,0.05); }
+
+  ul, ol {
+    margin: 0.8em 0 0.8em 1.5em;
+    padding: 0;
+  }
+  li {
+    margin: 0.35em 0;
+    color: var(--text);
+  }
+  li::marker { color: var(--accent1); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5em 0;
+  }
+
+  figure {
+    margin: 1.5em 0;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 16px;
+  }
+  figure img {
+    max-width: 100%;
+    border-radius: 8px;
+    display: block;
+    margin: 0 auto;
+  }
+  figcaption {
+    color: var(--subtext);
+    font-size: 12px;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  div[align="center"] {
+    text-align: center;
+    color: var(--subtext);
+    font-size: 13px;
+    margin: 1em 0;
+  }
+
+  /* KPI mini-cards for results section */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 1.5em 0;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .kpi-value { font-size: 1.4em; font-weight: 700; color: var(--accent2); }
+  .kpi-label { font-size: 11px; color: var(--subtext); margin-top: 4px; }
+
+  /* Footer */
+  .footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 24px;
+    color: var(--subtext);
+    font-size: 13px;
+  }
+
+  @media print {
+    body { background: white; color: black; }
+    .cover { background: #f8f9fa; }
+    pre { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cover Page -->
+<div class="cover">
+  <div class="cover-badge">B.Tech CSE · Project Report</div>
+  <h1>Customer Shopping Behavior Analysis</h1>
+  <div class="subtitle">Using Python, SQL, and Data Visualization</div>
+  <div class="meta-grid">
+    <div class="meta-item">
+      <div class="meta-label">Prepared By</div>
+      <div class="meta-value">Anshu Naskar</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Course</div>
+      <div class="meta-value">B.Tech – CSE</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Dataset</div>
+      <div class="meta-value">Customer Shopping Behavior</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Records</div>
+      <div class="meta-value">3,900 customers · 18 features</div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Summary Banner -->
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:20px 40px;">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-value" style="color:#3FB950">$233,081</div><div class="kpi-label">Total Revenue</div></div>
+    <div class="kpi"><div class="kpi-value" style="color:#58A6FF">3,900</div><div class="kpi-label">Total Customers</div></div>
+    <div class="kpi"><div class="kpi-value" style="color:#FFA657">$59.76</div><div class="kpi-label">Avg Purchase</div></div>
+    <div class="kpi"><div class="kpi-value" style="color:#D2A8FF">3.75★</div><div class="kpi-label">Avg Rating</div></div>
+  </div>
+</div>
+
+<!-- Report Body -->
+<div class="content">
+<h1>Customer Shopping Behavior Analysis</h1>
+<h2>Using Python, SQL, and Data Visualization</h2>
+<hr>
+<div align="center">
+<p><strong>Prepared by:</strong> Anshu Naskar  
+<strong>Course:</strong> B.Tech – Computer Science & Engineering  
+<strong>Tools Used:</strong> Python · Pandas · NumPy · Matplotlib · PostgreSQL · VS Code · Jupyter Notebook  
+<strong>Dataset:</strong> Customer Shopping Behavior Dataset</p>
+<p></div></p>
+<hr>
+<h2>Abstract</h2>
+<p>This project analyzes customer shopping behavior to identify purchasing trends, customer preferences, and business opportunities. The dataset contains customer demographic information, purchase history, product details, payment methods, shipping preferences, review ratings, and subscription status.</p>
+<p>The analysis was performed using <strong>Python</strong> for data cleaning and exploratory data analysis (EDA), <strong>PostgreSQL</strong> for business query analysis, and visualization techniques to present meaningful insights. The objective is to support data-driven decision-making by uncovering patterns in customer spending and shopping behavior.</p>
+<hr>
+<h2>1. Objectives</h2>
+<p>The main objectives of this project are:</p>
+<ol><li>Clean and preprocess customer shopping data.</li>
+<li>Perform exploratory data analysis (EDA).</li>
+<li>Analyze customer purchasing behavior.</li>
+<li>Identify key business insights.</li>
+<li>Solve business problems using SQL and Python.</li>
+<li>Visualize customer trends through charts and graphs.</li>
+</ol>
+<hr>
+<h2>2. Dataset Description</h2>
+<p>The dataset consists of <strong>3,900 customer shopping records</strong> with the following attributes:</p>
+<table><tr><th>Column</th><th>Description</th></tr><tr><td>Customer ID</td><td>Unique customer identifier</td></tr><tr><td>Age</td><td>Customer age</td></tr><tr><td>Gender</td><td>Customer gender</td></tr><tr><td>Item Purchased</td><td>Product purchased</td></tr><tr><td>Category</td><td>Product category</td></tr><tr><td>Purchase Amount (USD)</td><td>Purchase value</td></tr><tr><td>Location</td><td>Customer state</td></tr><tr><td>Size</td><td>Product size</td></tr><tr><td>Color</td><td>Product color</td></tr><tr><td>Season</td><td>Purchase season</td></tr><tr><td>Review Rating</td><td>Customer rating</td></tr><tr><td>Subscription Status</td><td>Subscription membership</td></tr><tr><td>Shipping Type</td><td>Delivery method</td></tr><tr><td>Discount Applied</td><td>Discount usage</td></tr><tr><td>Promo Code Used</td><td>Promotional code usage</td></tr><tr><td>Previous Purchases</td><td>Number of previous purchases</td></tr><tr><td>Payment Method</td><td>Payment option</td></tr><tr><td>Frequency of Purchases</td><td>Shopping frequency</td></tr></table>
+<hr>
+<h2>3. Software and Technologies Used</h2>
+<table><tr><th>Tool</th><th>Version</th><th>Purpose</th></tr><tr><td>Python</td><td>3.10+</td><td>Core programming language</td></tr><tr><td>Pandas</td><td>2.x</td><td>Data manipulation</td></tr><tr><td>NumPy</td><td>1.24+</td><td>Numerical computing</td></tr><tr><td>Matplotlib</td><td>3.7+</td><td>Data visualization</td></tr><tr><td>PostgreSQL</td><td>15</td><td>SQL-based analysis</td></tr><tr><td>Jupyter Notebook</td><td>6.5+</td><td>Interactive analysis</td></tr><tr><td>VS Code</td><td>Latest</td><td>Development environment</td></tr><tr><td>Power BI</td><td>Desktop</td><td>Interactive dashboard</td></tr></table>
+<hr>
+<h2>4. Data Cleaning Process</h2>
+<p>The following preprocessing steps were performed:</p>
+<ol><li><strong>Removed duplicate records</strong> — ensured each Customer ID appears uniquely.</li>
+<li><strong>Handled missing values</strong> — applied median and group-wise median imputation.</li>
+<li><strong>Converted column names</strong> — standardized to <code>snake_case</code> format.</li>
+<li><strong>Standardized text formatting</strong> — uniform casing across categorical columns.</li>
+<li><strong>Verified data types</strong> — numeric columns confirmed as <code>int</code>/<code>float</code>, dates as <code>datetime</code>.</li>
+<li><strong>Checked for outliers</strong> — validated purchase amount ranges and rating bounds (1–5).</li>
+<li><strong>Feature engineering</strong> — created <code>Age Group</code> column from raw age values.</li>
+</ol>
+<hr>
+<h2>5. Exploratory Data Analysis</h2>
+<p>The following analyses were performed:</p>
+<table><tr><th>Analysis</th><th>Method</th></tr><tr><td>Customer age distribution</td><td>Histogram</td></tr><tr><td>Gender distribution</td><td>Pie / bar chart</td></tr><tr><td>Product category analysis</td><td>Bar chart</td></tr><tr><td>Revenue analysis</td><td>Aggregated bar chart</td></tr><tr><td>Shipping preferences</td><td>Donut chart</td></tr><tr><td>Payment method analysis</td><td>Bar chart</td></tr><tr><td>Seasonal purchasing trends</td><td>Grouped bar chart</td></tr><tr><td>Customer review ratings</td><td>Distribution plot</td></tr><tr><td>Subscription analysis</td><td>Donut chart</td></tr><tr><td>Discount analysis</td><td>Comparative bar chart</td></tr></table>
+> All charts were generated using <strong>Matplotlib</strong> with a custom dark theme. Outputs are saved in the <code>images/</code> directory.
+<h3>Dashboard Preview</h3>
+<figure><img src="../images/dashboard.png" alt="Full Dashboard"><figcaption>Full Dashboard</figcaption></figure>
+<h3>KPI Summary</h3>
+<figure><img src="../images/kpi_cards.png" alt="KPI Cards"><figcaption>KPI Cards</figcaption></figure>
+<table><tr><th>KPI</th><th>Value</th></tr><tr><td>Total Revenue</td><td>$233,081</td></tr><tr><td>Total Customers</td><td>3,900</td></tr><tr><td>Average Purchase</td><td>$59.76</td></tr><tr><td>Average Rating</td><td>3.75 / 5</td></tr></table>
+<hr>
+<h2>6. Business Questions Solved</h2>
+<p>The project answers the following business questions using SQL and Python:</p>
+<table><tr><th>#</th><th>Business Question</th></tr><tr><td>1</td><td>Total revenue generated by male and female customers</td></tr><tr><td>2</td><td>Customers who used discounts while spending above the average purchase amount</td></tr><tr><td>3</td><td>Top five products with the highest average review rating</td></tr><tr><td>4</td><td>Comparison of average purchase amount between shipping methods</td></tr><tr><td>5</td><td>Spending comparison between subscribers and non-subscribers</td></tr><tr><td>6</td><td>Products with the highest percentage of discounted purchases</td></tr><tr><td>7</td><td>Customer segmentation into New, Returning, and Loyal customers</td></tr><tr><td>8</td><td>Top three products purchased within each category</td></tr><tr><td>9</td><td>Relationship between repeat purchases and subscription status</td></tr><tr><td>10</td><td>Revenue contribution by different age groups</td></tr></table>
+<hr>
+<h2>7. Key Business Insights</h2>
+<h3>7.1 Revenue by Gender</h3>
+<figure><img src="../images/revenue_gender.png" alt="Revenue by Gender"><figcaption>Revenue by Gender</figcaption></figure>
+<ul><li>Both male and female customers contribute significantly to total revenue.</li>
+<li>Revenue distribution helps identify customer demographics for targeted marketing.</li>
+</ul>
+<h3>7.2 Discount Analysis</h3>
+<figure><img src="../images/discount_analysis.png" alt="Discount Analysis"><figcaption>Discount Analysis</figcaption></figure>
+<ul><li><strong>43%</strong> of customers used a discount on their purchase.</li>
+<li>A substantial number of customers spent above the average purchase amount despite using discounts.</li>
+<li>Discounts encourage larger purchases rather than simply reducing prices.</li>
+</ul>
+<h3>7.3 Product Ratings</h3>
+<ul><li>Highly rated products indicate strong customer satisfaction.</li>
+<li>These products can be promoted to increase sales volume.</li>
+</ul>
+<h3>7.4 Shipping Analysis</h3>
+<figure><img src="../images/shipping_analysis.png" alt="Shipping Analysis"><figcaption>Shipping Analysis</figcaption></figure>
+<ul><li>Customers choosing faster shipping methods often make higher-value purchases.</li>
+<li><strong>Standard</strong> and <strong>Free Shipping</strong> are the most popular choices.</li>
+<li><strong>Next Day Air</strong> attracts the premium-spend customer segment.</li>
+</ul>
+<h3>7.5 Subscription Analysis</h3>
+<figure><img src="../images/subscription.png" alt="Subscription"><figcaption>Subscription</figcaption></figure>
+<ul><li>Only <strong>27%</strong> of customers hold an active subscription.</li>
+<li>Subscribers and non-subscribers have similar average purchase values.</li>
+<li>Non-subscribers contribute higher overall revenue due to their larger base.</li>
+</ul>
+<h3>7.6 Discounted Products</h3>
+<ul><li>Certain products receive discounts more frequently.</li>
+<li>Businesses should monitor discount strategies to maintain profitability.</li>
+</ul>
+<h3>7.7 Customer Segmentation</h3>
+<ul><li><strong>Loyal customers</strong> generate consistent, predictable business.</li>
+<li><strong>Returning customers</strong> represent opportunities for loyalty program enrollment.</li>
+<li><strong>New customers</strong> require targeted engagement and onboarding strategies.</li>
+</ul>
+<h3>7.8 Product Performance</h3>
+<figure><img src="../images/top10_products.png" alt="Top 10 Products"><figcaption>Top 10 Products</figcaption></figure>
+<ul><li>Certain products dominate sales within their categories.</li>
+<li>High-demand products should receive inventory priority.</li>
+</ul>
+<h3>7.9 Repeat Buyers</h3>
+<ul><li>Repeat purchasing behavior provides valuable information for customer retention strategies.</li>
+<li>Customers with <strong>10+ previous purchases</strong> show the strongest loyalty signals.</li>
+</ul>
+<h3>7.10 Age Group Analysis</h3>
+<figure><img src="../images/age_group.png" alt="Age Group"><figcaption>Age Group</figcaption></figure>
+<ul><li>Age group <strong>36–45</strong> contributes the largest share of revenue.</li>
+<li>Age-based marketing campaigns can significantly improve customer engagement.</li>
+</ul>
+<hr>
+<h2>8. SQL Analysis</h2>
+<p>PostgreSQL was used to perform analytical queries including:</p>
+<pre><code class="lang-sql">-- Example: Revenue by Gender
+SELECT gender,
+       COUNT(customer_id)          AS total_customers,
+       SUM(purchase_amount_usd)    AS total_revenue,
+       ROUND(AVG(purchase_amount_usd), 2) AS avg_purchase
+FROM customer_shopping
+GROUP BY gender
+ORDER BY total_revenue DESC;
+<p>-- Example: Customer Segmentation
+SELECT customer_id,
+       previous_purchases,
+       CASE
+           WHEN previous_purchases = 0              THEN 'New Customer'
+           WHEN previous_purchases BETWEEN 1 AND 5  THEN 'Returning Customer'
+           ELSE                                          'Loyal Customer'
+       END AS customer_segment
+FROM customer_shopping;</p>
+<p>-- Example: Top 3 Products per Category
+SELECT category, item_purchased, total_revenue
+FROM (
+    SELECT category,
+           item_purchased,
+           SUM(purchase_amount_usd) AS total_revenue,
+           RANK() OVER (PARTITION BY category ORDER BY SUM(purchase_amount_usd) DESC) AS rk
+    FROM customer_shopping
+    GROUP BY category, item_purchased
+) ranked
+WHERE rk <= 3;
+</code></pre></p>
+<p>SQL techniques used: <code>GROUP BY</code>, <code>ORDER BY</code>, <code>HAVING</code>, <code>CASE</code>, <code>RANK() OVER</code>, <code>CTE</code>, aggregate functions.</p>
+<p>> The SQL analysis verified all insights obtained through Python EDA.</p>
+<hr>
+<h2>9. Results</h2>
+<p>The project successfully:</p>
+<ul><li>✅ Cleaned and prepared customer shopping data (3,900 records, 18 features)</li>
+<li>✅ Identified customer purchasing trends across demographics</li>
+<li>✅ Compared customer segments (new, returning, loyal)</li>
+<li>✅ Evaluated product performance by category</li>
+<li>✅ Measured revenue contribution across gender, age, state, and season</li>
+<li>✅ Generated business insights useful for strategic decision-making</li>
+<li>✅ Built an interactive Power BI dashboard with 4 KPI cards, 10 charts, and 5 slicers</li>
+</ul>
+<hr>
+<h2>10. Conclusion</h2>
+<p>The <strong>Customer Shopping Behavior Analysis</strong> project demonstrates how data analytics can transform raw customer data into actionable business insights. Using Python and PostgreSQL, the project identified purchasing patterns, customer segments, product performance, and revenue trends.</p>
+<p>The analysis highlights the importance of customer segmentation, promotional strategies, and product performance in improving business decisions. The findings can help organizations:</p>
+<ul><li>Optimize marketing campaigns by targeting high-value age groups and genders</li>
+<li>Enhance customer retention through subscription incentive programs</li>
+<li>Improve overall sales performance by focusing inventory on top-performing products</li>
+<li>Refine discount strategies to maximize order value rather than simply reducing price</li>
+</ul>
+<hr>
+<h2>11. Future Scope</h2>
+<p>The project can be extended by:</p>
+<ol><li><strong>Interactive Dashboard</strong> — Developing a real-time dashboard using Streamlit or Power BI Service</li>
+<li><strong>Machine Learning</strong> — Building customer purchase prediction models</li>
+<li><strong>Clustering</strong> — Performing customer segmentation using K-Means or DBSCAN</li>
+<li><strong>Recommendation Systems</strong> — Implementing collaborative filtering for product suggestions</li>
+<li><strong>Sales Forecasting</strong> — Forecasting future sales trends using time-series models (ARIMA, Prophet)</li>
+<li><strong>Web Deployment</strong> — Deploying the project as a Flask/FastAPI web application</li>
+</ol>
+<hr>
+<h2>12. References</h2>
+<table><tr><th>Resource</th><th>URL</th></tr><tr><td>Pandas Documentation</td><td>https://pandas.pydata.org/</td></tr><tr><td>NumPy Documentation</td><td>https://numpy.org/</td></tr><tr><td>Matplotlib Documentation</td><td>https://matplotlib.org/</td></tr><tr><td>PostgreSQL Documentation</td><td>https://www.postgresql.org/docs/</td></tr><tr><td>Python Documentation</td><td>https://docs.python.org/</td></tr><tr><td>Power BI Documentation</td><td>https://learn.microsoft.com/power-bi/</td></tr><tr><td>Dataset Source</td><td>Kaggle – Customer Shopping Behavior Dataset</td></tr></table>
+<hr>
+<div align="center">
+<p><em>Customer Shopping Behavior Analysis — B.Tech CSE Project Report</em>  
+<em>Prepared by: Anshu Naskar</em></p>
+<p></div></p>
+</div>
+
+<div class="footer">
+  Customer Shopping Behavior Analysis &nbsp;·&nbsp; B.Tech CSE Project Report &nbsp;·&nbsp; Anshu Naskar
+</div>
+
+</body>
+</html>
