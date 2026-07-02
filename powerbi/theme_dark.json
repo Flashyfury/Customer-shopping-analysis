@@ -1,0 +1,45 @@
+{
+  "name": "Customer Shopping Dark",
+  "dataColors": [
+    "#58A6FF",
+    "#3FB950",
+    "#F78166",
+    "#D2A8FF",
+    "#FFA657",
+    "#79C0FF",
+    "#FF7B72",
+    "#56D364",
+    "#FFA657",
+    "#A5D6FF"
+  ],
+  "background": "#0D1117",
+  "foreground": "#E6EDF3",
+  "tableAccent": "#58A6FF",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": { "color": "#161B22" }
+            }
+          }
+        ],
+        "fontColor": [
+          {
+            "color": {
+              "solid": { "color": "#E6EDF3" }
+            }
+          }
+        ],
+        "outspacePane": [
+          {
+            "color": {
+              "solid": { "color": "#0D1117" }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
